@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tyre Quality Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f4f4f4;
+        }
+        form {
+            margin-top: 30px;
+        }
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        #result img {
+            max-width: 300px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tyre Quality Control</h1>
+    <p>Upload a picture of a tyre and the Model will evaluate if it's good or defective.</p>
+
+    <!-- Form to upload image -->
+    <form action="/predict" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <button type="submit">Load & Predict</button>
+    </form>
+
+    <div id="prediction-result">
+        <h2 id="result-class"></h2>
+        <p id="confidence"></p>
+    </div>
+
+    <div id="result">
+        <h3>Uploaded Image</h3>
+        <img id="uploaded-image" src="" alt="Uploaded Image">
+    </div>
+
+    <script>
+        const form = document.querySelector('form');
+        form.onsubmit = async (e) => {
+            e.preventDefault(); // Prevent form from refreshing the page
+
+            const formData = new FormData(form);
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            const resultClass = data.class === 'good' ? 'Good Tyre' : 'Defective Tyre';
+            const confidence = data.confidence.toFixed(2);
+
+            // Display the result
+            document.getElementById('result-class').innerText = resultClass;
+            document.getElementById('confidence').innerText = `Confidence: ${confidence}`;
+
+            // Display the uploaded image
+            document.getElementById('uploaded-image').src = `data:image/png;base64,${data.image}`;
+        };
+    </script>
+</body>
+</html>

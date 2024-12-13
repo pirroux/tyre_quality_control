@@ -1,0 +1,10 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.log
+*.md
+*.git
+MobileNetTyre.h5
+dataset/
